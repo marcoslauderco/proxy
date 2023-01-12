@@ -9,12 +9,12 @@ jobs:
     
     steps:
       - uses: actions/checkout@v2
-#       - name: Nginx Proxy
-#         uses: appleboy/ssh-action@master
-#         with:
-#           host: ${{ secrets.IP }}
-#           username: ${{ secrets.USERNAME }}
-#           key: ${{ secrets.KEY }}
+      - name: Connect to ssh and Deploy with Docker
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.IP }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
 #           script: |
 #             cd path/to/your/app/directory
 #             git checkout .
