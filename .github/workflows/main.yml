@@ -15,10 +15,9 @@ jobs:
           host: ${{ secrets.IP }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-#           script: |
-#             cd path/to/your/app/directory
-#             git checkout .
-#             git pull
-#             npm run build
-#             pm2 restart MyApp
+          script: |
+            cd /home/sistemas/proxy
+            git checkout .
+            git pull
+            echo "<h1>CI</h1>" >> html/index.html
       - run: echo ${{ secrets.TESTE }}
