@@ -19,5 +19,6 @@ jobs:
             cd /home/sistemas/proxy
             git checkout .
             git pull
-            echo "<h1>CI</h1>" >> html/index.html
+            docker compose stop
+            docker compose up -d
       - run: echo ${{ secrets.TESTE }}
