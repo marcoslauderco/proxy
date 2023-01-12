@@ -1,0 +1,24 @@
+name: My Nginx Proxy CI
+
+on:
+  push:
+    branches: [master]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+#       - name: Nginx Proxy
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: ${{ secrets.IP }}
+#           username: ${{ secrets.USERNAME }}
+#           key: ${{ secrets.KEY }}
+#           script: |
+#             cd path/to/your/app/directory
+#             git checkout .
+#             git pull
+#             npm run build
+#             pm2 restart MyApp
+      - run: echo ${{ secrets.TESTE }}
