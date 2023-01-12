@@ -21,4 +21,3 @@ jobs:
             git pull
             docker compose stop
             docker compose up -d
-      - run: echo ${{ secrets.TESTE }}
