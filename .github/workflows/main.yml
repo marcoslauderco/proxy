@@ -2,7 +2,7 @@ name: My Nginx Proxy CI
 
 on:
   push:
-    branches: [master]
+    branches: [main]
 jobs:
   deploy:
     runs-on: ubuntu-latest
