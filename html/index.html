@@ -11,6 +11,144 @@
 body,h1 {font-family: "Raleway", Arial, sans-serif}
 h1 {letter-spacing: 6px}
 .w3-row-padding img {margin-bottom: 12px}
+*, *:after, *:before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.hello {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* top: 25%; */
+}
+.hello h2 {
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  font-size: 40px;
+  letter-spacing: 0.0625em;
+  width: calc(20ch + 20*0.0625em);
+}
+.hello h2:after {
+  display: block;
+  position: absolute;
+  content: "";
+  width: calc(20ch + 20*0.0625em);
+  height: 2ex;
+  left: 0;
+  top: 0.4em;
+  background: #fff;
+  border-left: 1px solid #000;
+}
+
+.anim0 h2:after {
+  animation:  0.6s blink 20, move 5s 1.5s 2 alternate steps(1);
+}
+.anim1 h2:after {
+  animation:  0.6s blink 20, move 5s 1.5s 2 alternate steps(1);
+}
+.anim2 h2:after {
+  animation:  0.6s blink 20, move 5s 1.5s 2 alternate steps(1);
+}
+
+@keyframes move {
+  13% {
+    width: calc(calc(20ch + 20*0.0625em) - (1ch + 1*0.0625em));
+    left: calc(1ch + 1*0.0625em);
+  }
+  16% {
+    width: calc(calc(20ch + 20*0.0625em) - (2ch + 2*0.0625em));
+    left: calc(2ch + 2*0.0625em);
+  }
+  19% {
+    width: calc(calc(20ch + 20*0.0625em) - (3ch + 3*0.0625em));
+    left: calc(3ch + 3*0.0625em);
+  }
+  22% {
+    width: calc(calc(20ch + 20*0.0625em) - (4ch + 4*0.0625em));
+    left: calc(4ch + 4*0.0625em);
+  }
+  25% {
+    width: calc(calc(20ch + 20*0.0625em) - (5ch + 5*0.0625em));
+    left: calc(5ch + 5*0.0625em);
+  }
+  28% {
+    width: calc(calc(20ch + 20*0.0625em) - (6ch + 6*0.0625em));
+    left: calc(6ch + 6*0.0625em);
+  }
+  31% {
+    width: calc(calc(20ch + 20*0.0625em) - (7ch + 7*0.0625em));
+    left: calc(7ch + 7*0.0625em);
+  }
+  34% {
+    width: calc(calc(20ch + 20*0.0625em) - (8ch + 8*0.0625em));
+    left: calc(8ch + 8*0.0625em);
+  }
+  37% {
+    width: calc(calc(20ch + 20*0.0625em) - (9ch + 9*0.0625em));
+    left: calc(9ch + 9*0.0625em);
+  }
+  40% {
+    width: calc(calc(20ch + 20*0.0625em) - (10ch + 10*0.0625em));
+    left: calc(10ch + 10*0.0625em);
+  }
+  43% {
+    width: calc(calc(20ch + 20*0.0625em) - (11ch + 11*0.0625em));
+    left: calc(11ch + 11*0.0625em);
+  }
+  46% {
+    width: calc(calc(20ch + 20*0.0625em) - (12ch + 12*0.0625em));
+    left: calc(12ch + 12*0.0625em);
+  }
+  49% {
+    width: calc(calc(20ch + 20*0.0625em) - (13ch + 13*0.0625em));
+    left: calc(13ch + 13*0.0625em);
+  }
+  52% {
+    width: calc(calc(20ch + 20*0.0625em) - (14ch + 14*0.0625em));
+    left: calc(14ch + 14*0.0625em);
+  }
+  55% {
+    width: calc(calc(20ch + 20*0.0625em) - (15ch + 15*0.0625em));
+    left: calc(15ch + 15*0.0625em);
+  }
+  58% {
+    width: calc(calc(20ch + 20*0.0625em) - (16ch + 16*0.0625em));
+    left: calc(16ch + 16*0.0625em);
+  }
+  61% {
+    width: calc(calc(20ch + 20*0.0625em) - (17ch + 17*0.0625em));
+    left: calc(17ch + 17*0.0625em);
+  }
+  64% {
+    width: calc(calc(20ch + 20*0.0625em) - (18ch + 18*0.0625em));
+    left: calc(18ch + 18*0.0625em);
+  }
+  67% {
+    width: calc(calc(20ch + 20*0.0625em) - (19ch + 19*0.0625em));
+    left: calc(19ch + 19*0.0625em);
+  }
+  70% {
+    width: calc(calc(20ch + 20*0.0625em) - (20ch + 20*0.0625em));
+    left: calc(20ch + 20*0.0625em);
+  }
+}
+@keyframes blink {
+  0% {
+    border-left-color: #000;
+  }
+  50% {
+    border-left-color: #000;
+  }
+  51% {
+    border-left-color: #fff;
+  }
+  100% {
+    border-left-color: #fff;
+  }
+}
 </style>
 </head>
 <body>
@@ -20,8 +158,8 @@ h1 {letter-spacing: 6px}
 
 <!-- Header -->
 <header class="w3-panel w3-center w3-opacity" style="padding:128px 16px">
-  <h1 class="w3-xlarge">Full-Stack Developer</h1>
-  <h1>Marcos Lauder</h1>
+  <h1 class="">Marcos Lauder</h1>
+  <div id="hello" class="hello anim2"><h2 class="w3-xlarge" id="stack">Full-Stack Developer</h2></div>
   
   <div class="w3-padding-32">
     <div class="w3-bar w3-border">
@@ -44,6 +182,25 @@ h1 {letter-spacing: 6px}
   <i class="fa fa-linkedin w3-hover-opacity"></i>
   <p>Powered by <a href="marcoslauder.tech" target="_blank" class="w3-hover-text-green">marcoslauder.tech</a></p>
 </footer>
+
+<script>
+    staks = [
+      "Web Desing . . .   ",
+      "JAVA | PHP | DOCKER",
+      "Full-Stack Developer"
+    ];
+    count = 2;
+    setInterval(function() {
+        document.getElementById("hello").classList.remove("anim"+count);
+        count ++;
+        if(count >= 3){
+          count = 0;
+        }
+        document.getElementById("stack").innerHTML = staks[count];      
+        setInterval(function() {document.getElementById("hello").classList.add("anim"+count);}, 100);
+    }, 11000);
+  
+</script>
 
 </body>
 </html>
