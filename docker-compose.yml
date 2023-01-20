@@ -12,7 +12,7 @@ services:
       - 80:80
       - 443:443
     working_dir: /usr/share/nginx/html
-    command: sass --style=compressed scss:css
+    command: sass --watch --style=compressed scss:css 
 networks:
   net:
     driver: bridge
