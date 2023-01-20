@@ -12,7 +12,8 @@ services:
       - 80:80
       - 443:443
     working_dir: /usr/share/nginx/html
-    # command: sass --style=compressed scss:css && nginx
+    command:  bash -c "sass --style=compressed scss:css && /usr/sbin/nginx -g 'daemon off;'"
+    tty: true
 networks:
   net:
     driver: bridge
