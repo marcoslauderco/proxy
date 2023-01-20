@@ -1,0 +1,24 @@
+body,
+h1 {
+    font-family: "Raleway", Arial, sans-serif;
+}
+
+h1 {
+    letter-spacing: 6px;
+}
+
+.w3-row-padding img {
+    margin-bottom: 12px;
+}
+
+*,
+*:after,
+*:before {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@import "animation.scss";
+@import "cards.scss";
