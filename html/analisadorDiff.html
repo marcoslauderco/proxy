@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Analisador de Diff Git</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+  <style>
+    pre { background: #f4f4f4;  }
+    .output { margin-top: 20px; }
+    .danger-icon {
+      width: 16px;
+      height: 16px;
+    }
+  </style>
+</head>
+<body class="container">
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+    <symbol id="check-circle-fill" viewBox="0 0 16 16">
+      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+    </symbol>
+    <symbol id="info-fill" viewBox="0 0 16 16">
+      <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+    </symbol>
+    <symbol id="exclamation-triangle-fill" viewBox="0 0 16 16">
+      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </symbol>
+  </svg>
+  <h1>Analisador de Diff Git - Apenas [backend]</h1>
+  <div class="alert alert-danger d-flex align-items-center" role="alert">
+    <svg class="bi flex-shrink-0 me-2 danger-icon" role="img" aria-label="Danger:">
+      <use xlink:href="#exclamation-triangle-fill"/></svg>
+    <div>
+      Por favor Revise todos os resultados.
+    </div>
+  </div>
+  <input type="file" id="fileInput" accept=".diff,.patch,.txt" class="form-control mb-1">
+  <textarea id="diffInput" placeholder="Cole o conteúdo do diff aqui ou carregue um arquivo..." class="form-control"></textarea><br>
+  <button onclick="analisarDiff()" class="btn btn-outline-dark">Analisar Diff</button>
+
+  <div class="output">
+    <h2>Resultado
+      <button onclick="copiar()" class="btn btn-outline-dark btn-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+          <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+          <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+        </svg>
+      </button>
+
+    </h2>
+    
+    <pre><code id="resultado"></code></pre>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+  <script>
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('diffInput').value = e.target.result;
+      };
+      reader.readAsText(file);
+    });
+
+    function analisarDiff() {
+      const diff = document.getElementById('diffInput').value;
+      const linhas = diff.split('\n');
+
+      const novosMetodos = {};
+      const metodosAlterados = {};
+      const estruturas = [];
+
+      let arquivoAtual = '';
+      let dentroMetodoNovo = false;
+      let dentroMetodoAlterado = false;
+      let nomeMetodo = '';
+      let linhaInicio = 0;
+      let linhaAtual = 0;
+      let contadorChaves = 0;
+
+      const regexMetodo = /\b(public|private|protected)?\s+(static\s+)?[\w<>\[\]]+\s+(\w+)\s*\([^)]*\)(\s*throws\s+\w+(<.*?>)?(\s*,\s*\w+(<.*?>)?)*)?\s*\{/;
+      const regexArquivo = /^\+\+\+\s+b\/(.*\.java)$/;
+      const regexNovoArquivo = /^diff --git a\/.* b\/(.*\.java)$/;
+      const regexEnum = /\b(enum|interface)\s+(\w+)/;
+      const regexLinha = /^@@ -(\d+),\d+ \+(\d+),\d+ @@/;
+
+      linhaAtual = 0;
+      for (let i = 0; i < linhas.length; i++) {
+        const linha = linhas[i];
+        linhaAtual++;
+
+         // Começo provável de método
+        if (/(public|private|protected)\s+/.test(linha) 
+            && linha.includes('(')
+            && !linha.includes('=')) {
+          if (!linha.includes('{')) {
+            metodoLinhaAtual = linha;
+            metodoProximaLinha = linhas[i+1].replace(/^[+\-]\s*/, '');
+            linhas[i+1] = metodoLinhaAtual + metodoProximaLinha;
+            continue;
+          }
+        }
+
+        const matchArquivo = linha.match(regexArquivo);
+        if (matchArquivo) {
+          arquivoAtual = matchArquivo[1];
+          linhaAtual = 0;
+          continue;
+        }
+
+        const matchNovoArquivo = linha.match(regexNovoArquivo);
+        if (matchNovoArquivo) {
+          arquivoAtual = matchNovoArquivo[1];
+          linhaAtual = 0;
+          continue;
+        }
+
+        const matchLinha = linha.match(regexLinha);
+
+        if (matchLinha) {
+          linhaAtual = parseInt(matchLinha[2], 10) - 1; // número da linha no novo arquivo
+        }
+
+        const matchEnum = linha.match(regexEnum);
+        if (matchEnum && linha.startsWith('+')) {
+          estruturas.push({ tipo: matchEnum[1], nome: matchEnum[2], arquivo: arquivoAtual });
+        }
+
+        if (linha.startsWith('+') && regexMetodo.test(linha)) {
+          const match = linha.match(regexMetodo);
+          nomeMetodo = match[3] || '[Nome do Método não encontrado]';
+          linhaInicio = linhaAtual;
+          dentroMetodoNovo = true;
+          contadorChaves = 0;
+        }
+
+        if(linha.includes('{')){
+          contadorChaves++;
+        }
+        if(linha.includes('}')){
+          contadorChaves--;
+        }
+
+        if (dentroMetodoNovo && linha.startsWith('+') && contadorChaves === 0 && linha.includes('}')) {
+          if (!novosMetodos[arquivoAtual]) novosMetodos[arquivoAtual] = [];
+          novosMetodos[arquivoAtual].push({ nome: nomeMetodo, inicio: linhaInicio, fim: linhaAtual });
+          dentroMetodoNovo = false;
+        }
+
+        if (linha.startsWith('@@')) {
+          dentroMetodoAlterado = true;
+          nomeMetodo = '[Nome do Método não encontrado]';
+          linhaInicio = linhaAtual;
+        }
+
+        if (dentroMetodoAlterado && linha.startsWith('-') && regexMetodo.test(linha)) {
+          const match = linha.match(regexMetodo);
+          nomeMetodo = match[3] || '[Nome do Método não encontrado]';
+        }
+
+        if (dentroMetodoAlterado && linha.startsWith('+') && linha.includes('}')) {
+          if (!metodosAlterados[arquivoAtual]) metodosAlterados[arquivoAtual] = [];
+          metodosAlterados[arquivoAtual].push({ nome: nomeMetodo, linha: linhaAtual });
+          dentroMetodoAlterado = false;
+        }
+      }
+
+      let saida = 'Novos métodos criados\n';
+      let total = 0;
+
+      for (const arquivo in novosMetodos) {
+        let saidaArquivo = arquivo + '\n';
+        let saidaMetodos = "";
+        novosMetodos[arquivo].forEach(m => {
+          if (/^get[A-Z_]/.test(m.nome) 
+            || /^set[A-Z_]/.test(m.nome)
+            || /^toString/.test(m.nome)
+            || /^hashCode/.test(m.nome)
+            || /^equals/.test(m.nome)) {
+              return; // ignora métodos get/set padrão
+          }
+
+          saidaMetodos += `* ${m.nome}, linhas ${m.inicio} até ${m.fim} [1 unidade de medida]\n`;
+          total += 1;
+        });
+        if(saidaMetodos != ''){
+          saida += saidaArquivo + saidaMetodos;
+        }
+      }
+
+      estruturas.forEach(e => {
+        saida += `${e.arquivo}\n* ${e.nome}, ${e.tipo} [1/3 unidade de medida]\n`;
+        total += 1/3;
+      });
+
+      saida += `Total ${total.toFixed(2)} unidade(s) de medida\n\n`;
+
+      /*
+      saida += 'Métodos alterados\n';
+      let totalAlterados = 0;
+      for (const arquivo in metodosAlterados) {
+        saida += arquivo + '\n';
+        metodosAlterados[arquivo].forEach(m => {
+          saida += `* ${m.nome}, linha ${m.linha} [1 unidade de medida]\n`;
+          totalAlterados += 1;
+        });
+      }
+
+      saida += `Total ${totalAlterados} unidade(s) de medida`;
+      */
+      document.getElementById('resultado').textContent = saida;
+    }
+
+    function copiar() {
+      // Get the text field
+      var copyText = document.getElementById("resultado");
+
+      // Copy the text inside the text field
+      navigator.clipboard.writeText(copyText.innerHTML);
+
+    }
+  </script>
+</body>
+</html>
