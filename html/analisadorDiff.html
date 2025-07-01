@@ -190,6 +190,10 @@
         });
         if(saidaMetodos != ''){
           saida += saidaArquivo + saidaMetodos + "\n";
+        }else{
+           nomeSplit = saidaArquivo.split("/");
+           nomeEntidade = nomeSplit[array.length - 1].replace(".java", "");
+           estruturas.push({ tipo: `Entidade`, nome: nomeEntidade, arquivo: saidaArquivo });
         }
       }
 
