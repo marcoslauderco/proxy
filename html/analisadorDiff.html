@@ -170,7 +170,7 @@
         }
       }
 
-      let saida = 'Novos métodos criados\n';
+      let saida = 'Novos métodos criados\n\n';
       let total = 0;
 
       for (const arquivo in novosMetodos) {
@@ -189,7 +189,7 @@
           total += 1;
         });
         if(saidaMetodos != ''){
-          saida += saidaArquivo + saidaMetodos;
+          saida += saidaArquivo + saidaMetodos + "\n";
         }
       }
 
