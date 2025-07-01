@@ -191,9 +191,9 @@
         if(saidaMetodos != ''){
           saida += saidaArquivo + saidaMetodos + "\n";
         }else{
-           nomeSplit = saidaArquivo.split("/");
+           nomeSplit = arquivo.split("/");
            nomeEntidade = nomeSplit[nomeSplit.length - 1].replace(".java", "");
-           estruturas.push({ tipo: `Entidade`, nome: nomeEntidade, arquivo: saidaArquivo });
+           estruturas.push({ tipo: `Entidade`, nome: nomeEntidade, arquivo: arquivo });
         }
       }
 
