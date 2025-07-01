@@ -79,6 +79,7 @@
       let linhaInicio = 0;
       let linhaAtual = 0;
       let contadorChaves = 0;
+      let descontoLinhaInicio = 0;
 
       const regexMetodo = /\b(public|private|protected)?\s+(static\s+)?[\w<>\[\]]+\s+(\w+)\s*\([^)]*\)(\s*throws\s+\w+(<.*?>)?(\s*,\s*\w+(<.*?>)?)*)?\s*\{/;
       const regexArquivo = /^\+\+\+\s+b\/(.*\.java)$/;
@@ -99,6 +100,7 @@
             metodoLinhaAtual = linha;
             metodoProximaLinha = linhas[i+1].replace(/^[+\-]\s*/, '');
             linhas[i+1] = metodoLinhaAtual + metodoProximaLinha;
+            descontoLinhaInicio++;
             continue;
           }
         }
@@ -131,7 +133,8 @@
         if (linha.startsWith('+') && regexMetodo.test(linha)) {
           const match = linha.match(regexMetodo);
           nomeMetodo = match[3] || '[Nome do Método não encontrado]';
-          linhaInicio = linhaAtual;
+          linhaInicio = linhaAtual - descontoLinhaInicio;
+          descontoLinhaInicio = 0;
           dentroMetodoNovo = true;
           contadorChaves = 0;
         }
@@ -182,7 +185,7 @@
               return; // ignora métodos get/set padrão
           }
 
-          saidaMetodos += `* ${m.nome}, linhas ${m.inicio} até ${m.fim} [1 unidade de medida]\n`;
+          saidaMetodos += `* Método ${m.nome}, linhas ${m.inicio} até ${m.fim} [1 unidade de medida]\n`;
           total += 1;
         });
         if(saidaMetodos != ''){
