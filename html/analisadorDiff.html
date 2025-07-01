@@ -130,7 +130,7 @@
           estruturas.push({ tipo: matchEnum[1], nome: matchEnum[2], arquivo: arquivoAtual });
         }
 
-        if (!dentroMetodoNovo && linha.startsWith('+') && regexMetodo.test(linha)) {
+        if (linha.startsWith('+') && regexMetodo.test(linha)) {
           const match = linha.match(regexMetodo);
           nomeMetodo = match[3] || '[Nome do Método não encontrado]';
           linhaInicio = linhaAtual - descontoLinhaInicio;
